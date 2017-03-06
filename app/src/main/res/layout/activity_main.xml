@@ -32,4 +32,17 @@
         android:layout_marginStart="13dp"
         android:layout_marginBottom="9dp"
         android:id="@+id/bhistory" />
+
+    <fragment
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        class ="com.example.temp_monitor.MyListFragment"
+        android:id="@+id/lvfragment"
+        tools:layout="@layout/list_fragment"
+        android:layout_marginTop="71dp"
+        android:layout_below="@+id/tvhumidity"
+        android:layout_alignStart="@+id/bhistory"
+        android:layout_marginStart="9dp"
+        android:layout_above="@+id/bhistory" />
+
 </RelativeLayout>

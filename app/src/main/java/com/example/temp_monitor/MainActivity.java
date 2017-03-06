@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 
@@ -19,6 +20,8 @@ import com.google.firebase.database.ValueEventListener;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     static final String TAG = "MainActivity";
@@ -29,12 +32,14 @@ public class MainActivity extends AppCompatActivity {
     Button bhistory;
     Intent historyintent;
     ArrayList<String> mylist = new ArrayList<String>();
+    MyListFragment myListFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tvhumidity = (TextView) findViewById(R.id.tvhumidity);
         bhistory = (Button) findViewById(R.id.bhistory);
+        myListFragment = (MyListFragment) getSupportFragmentManager().findFragmentById(R.id.lvfragment);
         getAllValues();
         historyintent = new Intent(getApplicationContext(),HistoryActivity.class);
     }
@@ -68,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
     }
     private void getAllValues(){
         DatabaseReference mRef = mRootRef.child("Leppavaara/temperature");
-        mRef.orderByChild("date").equalTo("01/03/2017").addChildEventListener(new ChildEventListener() {
+        mRef.orderByChild("date").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Weather weather = dataSnapshot.getValue(Weather.class);
-                mylist.add(weather.value);
+                mylist.add(weather.date);
                 Log.d(TAG," date " + weather.date + " time " +weather.time+ " value "+weather.value);
                 buildIntent();
             }
@@ -94,6 +99,16 @@ public class MainActivity extends AppCompatActivity {
     }
     private void buildIntent(){
         Log.d(TAG, "mylist size"+ mylist.size());
+        // removing duplicates from the list
+        Set<String> hs = new LinkedHashSet<>();
+        hs.addAll(mylist);
+        Log.d(TAG, "hs = " + hs.toString());
+        mylist.clear();
+        mylist.addAll(hs);
         historyintent.putStringArrayListExtra("mylist", mylist);
+        // muutetaan arraylist arrayksi
+        String [] dates = new String[mylist.size()];
+        dates = mylist.toArray(dates);
+        myListFragment.getList(dates);
     }
 }
