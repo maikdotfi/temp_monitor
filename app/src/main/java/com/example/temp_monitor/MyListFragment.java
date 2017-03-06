@@ -1,6 +1,7 @@
 package com.example.temp_monitor;
 
 
+import android.content.Intent;
 import android.support.v4.app.ListFragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,11 +24,11 @@ import java.util.ArrayList;
  * Created by Mike on 6.3.2017.
  */
 
-public class MyListFragment extends ListFragment implements ListView.OnItemClickListener {
+public class MyListFragment extends ListFragment {
     String test = "testi fail";
     ArrayList<String> datelist;
-    String[] dates;
     ArrayAdapter myAdapter;
+    Intent historyintent;
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -43,17 +44,20 @@ public class MyListFragment extends ListFragment implements ListView.OnItemClick
 
         return view;
     }
-
-
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        Toast toast = Toast.makeText(getActivity(), "Position = "+position+" Date ="+datelist.get(position), Toast.LENGTH_SHORT);
+        toast.show();
+        historyintent = new Intent(getActivity().getApplicationContext(),HistoryActivity.class);
+        historyintent.putExtra("date", datelist.get(position));
+        startActivity(historyintent);
     }
-    public void getList(String[] s){
-        Log.d("MyListFragment", "Testi string = " + s.length);
+    public void getList(ArrayList<String> s){
+        Log.d("MyListFragment", "Testi string = " + s.size());
         //datelist.add("testi");
-        dates = s;
-        myAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, dates);
+        //dates = s;
+        datelist = s;
+        myAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, s);
         setListAdapter(myAdapter);
     }
 }

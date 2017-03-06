@@ -33,7 +33,10 @@ public class HistoryActivity extends Activity {
         super.onCreate(savedInstanceState);
         Intent i =getIntent();
         mylist = i.getStringArrayListExtra("mylist");
-        Log.d(TAG, "mylist size = "+ mylist.size());
+        //Log.d(TAG, "mylist size = "+ mylist.size());
+
+        // should show the date clicked in listfragment
+        Log.d(TAG, "date = "+i.getStringExtra("date"));
         setContentView(R.layout.history_activity);
         nextPart();
 

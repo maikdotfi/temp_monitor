@@ -106,9 +106,6 @@ public class MainActivity extends AppCompatActivity {
         mylist.clear();
         mylist.addAll(hs);
         historyintent.putStringArrayListExtra("mylist", mylist);
-        // muutetaan arraylist arrayksi
-        String [] dates = new String[mylist.size()];
-        dates = mylist.toArray(dates);
-        myListFragment.getList(dates);
+        myListFragment.getList(mylist);
     }
 }
