@@ -57,7 +57,7 @@ public class MyListFragment extends ListFragment {
         //datelist.add("testi");
         //dates = s;
         datelist = s;
-        myAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, s);
+        myAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_selectable_list_item, s);
         setListAdapter(myAdapter);
     }
 }

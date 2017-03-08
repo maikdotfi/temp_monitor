@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     static final String TAG = "MainActivity";
     //FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference mConditionRef = mRootRef.child("Leppavaara/newest/humidity");
+    DatabaseReference mConditionRef = mRootRef.child("Leppavaara/temp/cur_temp");
     TextView tvhumidity;
     Button bhistory;
     Intent historyintent;
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 // whenever data at this location is updated.
                 String value = dataSnapshot.getValue(String.class);
                 Log.d(TAG, "Value is: " + value);
-                tvhumidity.setText(value.toString());
+                tvhumidity.setText(value.toString()+" C°");
             }
 
             @Override
