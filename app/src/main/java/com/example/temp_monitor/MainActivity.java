@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference mConditionRef = mRootRef.child("Leppavaara/temp/cur_temp");
     TextView tvhumidity;
     Button bhistory;
-    Intent historyintent;
+    Intent historyintent, mapintent;
     ArrayList<String> mylist = new ArrayList<String>();
     MyListFragment myListFragment;
     @Override
@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         myListFragment = (MyListFragment) getSupportFragmentManager().findFragmentById(R.id.lvfragment);
         getAllValues();
         historyintent = new Intent(getApplicationContext(),HistoryActivity.class);
+        mapintent = new Intent(getApplicationContext(), MapsActivity.class);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         bhistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(historyintent);
+                startActivity(mapintent);
             }
         });
     }

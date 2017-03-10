@@ -14,7 +14,7 @@
         android:id="@+id/tvhumidity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Humidity loading"
+        android:text="Temperature loading"
         android:fontFamily="sans-serif"
         android:textSize="24sp"
         android:textColor="@color/colorPrimary"
@@ -24,7 +24,7 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:text="History"
+        android:text="Show on map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

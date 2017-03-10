@@ -2,6 +2,7 @@ package com.example.temp_monitor;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -36,6 +38,9 @@ public class HistoryActivity extends Activity {
     DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
     DatabaseReference mConditionRef = mRootRef.child("Leppavaara/temperature");
     ArrayList<String> mylist=new ArrayList<String>();
+    LineGraphSeries<DataPoint> series;
+    String date;
+    GraphView graph;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,46 +50,10 @@ public class HistoryActivity extends Activity {
 
         // should show the date clicked in listfragment
         Log.d(TAG, "date = "+i.getStringExtra("date"));
+        date = i.getStringExtra("date");
         setContentView(R.layout.history_activity);
-
-        // create graph object here
-
-        // start firebase query, showGraph(); inside! - remember it's fucked
-        showGraph(); // have to change this to real-time db.
-        // should just create the chart as empty and use the real-time features to add new datapoints
-
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //Log.d(TAG, "mylist size= "+ mylist.size());
-    }
-
-    private void showGraph(){
-        //Log.d(TAG, "nextPart mylist size= "+ mylist.size());
-        String date = "08/02/2017"; // should get from onCreate, pass every child value here
-        String time = "15:49:58";
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        Date d = null;
-        try {
-            d = sdf.parse(date+" "+time);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Log.d("MainActivity", "date d to string = "+date.toString());
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(d);
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(d, 1),
-                new DataPoint(d, 5),
-                new DataPoint(d, 1),
-                new DataPoint(d, 5),
-                new DataPoint(d, 3)
-        });
-        graph.addSeries(series);
+        // graph view object created
+        graph = (GraphView) findViewById(R.id.graph);
         graph.getGridLabelRenderer().setHumanRounding(false); //not used with dates
         graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
             @Override
@@ -96,12 +65,94 @@ public class HistoryActivity extends Activity {
                     // return super.formatLabel(value, isValueX);  -- this is the original
                     return s;
                 } else {
-                    // show currency for y values
-                    return super.formatLabel(value, isValueX) + " C";
+                    // show C for y values
+                    Log.d("formatLabel", "double "+ Double.toString(value));
+                    return super.formatLabel(value, isValueX) + " C°";
                 }
             }
         });
 
+        series = new LineGraphSeries<DataPoint>();
+
+        // formating stuff for the graph
+
+        // start firebase query, append datapoints to chart
+        getXYvalues(date);
+        //showGraph(); // have to change this to real-time db.
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //Log.d(TAG, "mylist size= "+ mylist.size());
+    }
+
+    private void graphFormating(GraphView graph, Date d, double d1){
+        graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setMinY(d1-10);
+        graph.getViewport().setMaxY(d1+15);
+        Log.d("graphFormating", "date = "+ Double.toString(d.getTime()));
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(d.getTime());
+        graph.getViewport().setMaxX(d.getTime()+35000);
+        graph.getViewport().scrollToEnd();
+
+        graph.getViewport().setScrollable(true); // enables horizontal scrolling
+        graph.getViewport().setScrollableY(true); // enables vertical scrolling
+        graph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
+        graph.getViewport().setScalableY(true); // enables vertical zooming and scrolling
+        graph.getViewport().setDrawBorder(true);
+        graph.getViewport().setBackgroundColor(Color.argb(200, 238, 152, 250));
+        graph.setTitle("Temperature history "+date);
+
+    }
+
+    private void getXYvalues(String date){
+        DatabaseReference mRef = mRootRef.child("Leppavaara/temperature");
+        mRef.orderByChild("date").equalTo(date).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Weather weather = dataSnapshot.getValue(Weather.class);
+                if (weather.value == null){
+                    weather.value = "0";
+                    Log.d(TAG, "weather.value null");
+                }
+                // have to convert values to double for the chart
+                Log.d(TAG," date " + weather.date + " time " +weather.time+ " value "+weather.value.toString());
+                // getting the date value
+                String date = weather.date; // should get from onCreate, pass every child value here
+                String time = weather.time;
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                Date d = null;
+                try {
+                    d = sdf.parse(date+" "+time);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                Log.d(TAG, "date d to string = "+d.toString());
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(d);
+                // convert value to double
+                double d1 = Double.parseDouble(weather.value);
+                Log.d(TAG, "double d1 from weather value = "+ Double.toString(d1));
+                // append to chart here
+                series.appendData(new DataPoint(d, d1), true, 10);
+                graph.addSeries(series);
+                graphFormating(graph, d, d1);
+            }
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 }
 
