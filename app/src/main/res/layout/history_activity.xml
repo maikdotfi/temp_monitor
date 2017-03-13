@@ -8,4 +8,43 @@
         android:layout_height="200dip"
         android:id="@+id/graph" />
 
+    <TextView
+        android:text="Loading avg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvaverage"
+        android:fontFamily="sans-serif"
+        android:textSize="24sp"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="normal|bold"
+        android:textAlignment="gravity"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:text="Loading max"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvmax"
+        android:fontFamily="sans-serif"
+        android:textSize="24sp"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="normal|bold"
+        android:textAlignment="gravity"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:text="Loading min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvmin"
+        android:fontFamily="sans-serif"
+        android:textSize="24sp"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="normal|bold"
+        android:textAlignment="gravity"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+
 </LinearLayout>

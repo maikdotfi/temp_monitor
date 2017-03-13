@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.android.gms.vision.text.Text;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -21,12 +22,14 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
+import java.util.Collections;
 
 /**
  * Created by Mike on 2.3.2017.
@@ -38,9 +41,12 @@ public class HistoryActivity extends Activity {
     DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
     DatabaseReference mConditionRef = mRootRef.child("Leppavaara/temperature");
     ArrayList<String> mylist=new ArrayList<String>();
+    ArrayList<Double> dlist=new ArrayList<>();
+    TextView tvavg, tvmax, tvmin;
     LineGraphSeries<DataPoint> series;
     String date;
     GraphView graph;
+    double avg;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +58,10 @@ public class HistoryActivity extends Activity {
         Log.d(TAG, "date = "+i.getStringExtra("date"));
         date = i.getStringExtra("date");
         setContentView(R.layout.history_activity);
+        // tvs
+        tvavg = (TextView) findViewById(R.id.tvaverage);
+        tvmax = (TextView) findViewById(R.id.tvmax);
+        tvmin = (TextView) findViewById(R.id.tvmin);
         // graph view object created
         graph = (GraphView) findViewById(R.id.graph);
         graph.getGridLabelRenderer().setHumanRounding(false); //not used with dates
@@ -139,6 +149,21 @@ public class HistoryActivity extends Activity {
                 series.appendData(new DataPoint(d, d1), true, 10);
                 graph.addSeries(series);
                 graphFormating(graph, d, d1);
+                dlist.add(d1);
+                // avg calcs
+                double sum = 0;
+                for (int i=0; i< dlist.size(); i++){
+                    sum = sum + dlist.get(i);
+                }
+                avg = sum/dlist.size();
+                //rounding
+                BigDecimal bd = new BigDecimal(avg);
+                bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+                // printing values to screen for min,max and avg
+
+                tvavg.setText("Average temp "+bd.toString()+" C°");
+                tvmax.setText("Max temp "+Collections.max(dlist).toString()+" C°");
+                tvmin.setText("Min temp "+Collections.min(dlist).toString()+" C°");
             }
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {

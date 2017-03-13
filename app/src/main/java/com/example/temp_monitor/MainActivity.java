@@ -28,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
     //FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
     DatabaseReference mConditionRef = mRootRef.child("Leppavaara/temp/cur_temp");
-    TextView tvhumidity;
+    DatabaseReference mConditionRef2 = mRootRef.child("Leppavaara/humi/cur_humi");
+    TextView tvhumidity, tvhumi;
     Button bhistory;
     Intent historyintent, mapintent;
     ArrayList<String> mylist = new ArrayList<String>();
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tvhumidity = (TextView) findViewById(R.id.tvhumidity);
+        tvhumi = (TextView) findViewById(R.id.tvhumi);
         bhistory = (Button) findViewById(R.id.bhistory);
         myListFragment = (MyListFragment) getSupportFragmentManager().findFragmentById(R.id.lvfragment);
         getAllValues();
@@ -57,6 +59,22 @@ public class MainActivity extends AppCompatActivity {
                 String value = dataSnapshot.getValue(String.class);
                 Log.d(TAG, "Value is: " + value);
                 tvhumidity.setText(value.toString()+" C°");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+        mConditionRef2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                Log.d(TAG, "Value is: " + value);
+                tvhumi.setText(value.toString()+" %");
             }
 
             @Override
