@@ -47,7 +47,7 @@ public class MyListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Toast toast = Toast.makeText(getActivity(), "Position = "+position+" Date ="+datelist.get(position), Toast.LENGTH_SHORT);
-        toast.show();
+        //toast.show();
         historyintent = new Intent(getActivity().getApplicationContext(),HistoryActivity.class);
         historyintent.putExtra("date", datelist.get(position));
         startActivity(historyintent);

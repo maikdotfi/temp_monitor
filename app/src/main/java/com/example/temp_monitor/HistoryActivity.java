@@ -112,8 +112,10 @@ public class HistoryActivity extends Activity {
         graph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
         graph.getViewport().setScalableY(true); // enables vertical zooming and scrolling
         graph.getViewport().setDrawBorder(true);
-        graph.getViewport().setBackgroundColor(Color.argb(200, 238, 152, 250));
+        graph.getViewport().setBackgroundColor(Color.argb(200, 133, 180, 188));
         graph.setTitle("Temperature history "+date);
+        graph.setTitleTextSize(64);
+        graph.setTitleColor(Color.argb(200, 0, 0, 0));
 
     }
 
